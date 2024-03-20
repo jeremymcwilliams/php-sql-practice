@@ -38,8 +38,7 @@ and put it in <div id="results">
 
 
 include("src/functions.php");
-$db=dbConnect();
-$neighborhoods=getNeighborhoods($db);
+
 
 ?>
 
@@ -76,21 +75,7 @@ $neighborhoods=getNeighborhoods($db);
         <div class="row">
             <div class="col-6">
 
-            <?php
-
-            foreach($neighborhoods as $n){
-              $id=$n["id"];
-              $hood=$n["neighborhood"];
-
-              echo "<p id='$id' class='hood'>$hood</p>";
-
-
-
-            }
-
-            //var_dump($neighborhoods);
-
-            ?>
+            
 
 
 
