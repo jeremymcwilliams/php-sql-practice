@@ -4,7 +4,7 @@ function dbConnect(){
     /*** connection credentials *******/
     $servername = "localhost";
     $username = "fakeAirbnbUser";
-    $password = "apples10Million!";
+    $password = "apples11Million!";
     $database = "fakeAirbnb";
     $dbport = 3306;
     /****** connect to database **************/

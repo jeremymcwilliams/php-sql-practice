@@ -4,7 +4,7 @@ function dbConnect(){
     /*** connection credentials *******/
     $servername = "localhost";
     $username = "fakeAirbnbUser";
-    $password = "apples10Million!";
+    $password = "apples11Million!";
     $database = "fakeAirbnb";
     $dbport = 3306;
     /****** connect to database **************/
@@ -20,9 +20,9 @@ function dbConnect(){
 
 
 /* query with no SQL arguments */
-function getAllListings($db){
+function getTwentyListings($db){
     try {
-        $stmt = $db->prepare("select * from listings");   
+        $stmt = $db->prepare("select * from listings limit 20");   
         $stmt->execute();
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
         return $rows;
@@ -37,11 +37,12 @@ function getAllListings($db){
 
 /* query with one SQL argument */
 function getListingsBelowPrice($db, $price){
-    echo $num;
+
     try {
-        $stmt = $db->prepare("select * from listings where price< :price order by price desc");   
-        $stmt->bindParam(':price',$price);
-        $stmt->execute();
+        $stmt = $db->prepare("select * from listings where price < ? order by price desc limit 20");   
+       // $stmt->bindParam(':price',$price);
+        $data=array($price);
+        $stmt->execute($data);
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
     
         return $rows;
@@ -53,29 +54,20 @@ function getListingsBelowPrice($db, $price){
     
 }
 
-/* query with one SQL argument */
-function getListingsByNeighborhoodIdAndMaxPrice($db, $neighborhoodId, $price){
+/* query with two SQL arguments */
+function getListingsByNeighborhoodIdAndMaxPrice($db, $price, $neighborhoodId){
     try {
         $stmt = $db->prepare("select * from listings
         join neighborhoods  on neighborhoods.id=listings.neighborhoodId 
-        where listings.price <= :price and neighborhoods.id = :neighborhoodId 
+        where listings.price <= ? and neighborhoods.id = ? 
         order by listings.price desc  
         limit 5       
         ");   
-        $stmt->execute(array(":price"=>$price, ":neighborhoodId"=>$neighborhoodId));
+        $stmt->execute(array($price, $neighborhoodId));
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
     
         /** see the resulting array **/
-        var_dump($rows);
-    
-        /** loop through the rows: **/
-        foreach ($rows as $row){
-            $id=$row["id"];
-            $name=$row["name"];
-            $price=$row["price"];
-
-            echo "<p>id: $id, name: $name, price: $price</p>";
-        }
+        return $rows;
     
     }
     catch (Exception $e) {
@@ -87,21 +79,41 @@ function getListingsByNeighborhoodIdAndMaxPrice($db, $neighborhoodId, $price){
 //get database connection
 $db=dbConnect();
 
-//get everything from listings table
-//$rows=getAllListings($db);
+
+?>
+
+<pre>
+    <code>
+<?php
+//get 20 listings from listings table
+//$rows=getTwentyListings($db);
 //var_dump($rows);
 
 //get x number of listings
-$price=150;
+//$price=150;
 //$rows=getListingsBelowPrice($db, $price);
 //var_dump($rows);
 
 // get listings from neighborhood (given id) and max price (given price)
-$neighborhoodId=22; //Eastmoreland
-$price=100;
-//$rows=getListingsByNeighborhoodIdAndMaxPrice($db, $neighborhoodId, $price);
+//$neighborhoodId=22; //Eastmoreland
+//$price=100;
+//$rows=getListingsByNeighborhoodIdAndMaxPrice($db, $price, $neighborhoodId);
 //var_dump($rows);
 
+/** loop through the rows: **/
+/*
+foreach ($rows as $row){
+    // access values via associated array 
+    // keys match the database table field names 
+    $id=$row["id"];
+    $name=$row["name"];
+    $price=$row["price"];
+
+    echo "<p>id: $id, name: $name, price: $price</p>";
+}
+*/
 
 
 ?>
+    </code>
+</pre>
